@@ -1,0 +1,27 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["Chris Matteson <chris.matteson@gmail.com>"]
+description = ""
+name = "dashboard"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/api"
+component = "dashboard"
+
+[component.dashboard]
+source = "api/target/dashboard.wasm"
+exclude_files = ["**/node_modules"]
+key_value_stores = ["default"]
+[component.dashboard.build]
+command = "npm run build"
+workdir = "api"
+
+[[trigger.http]]
+route = "/..."
+component = "static"
+
+[component.static]
+source = { url = "https://github.com/fermyon/spin-fileserver/releases/download/v0.1.0/spin_static_fs.wasm", digest = "sha256:96c76d9af86420b39eb6cd7be5550e3cb5d4cc4de572ce0fd1f6a29471536cb4" }
+files = [{ source = "static", destination = "/" }]

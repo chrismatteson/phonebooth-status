@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone Booth Status</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .phone-booth {
+      width: 50px;
+      height: 50px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      display: inline-block;
+    }
+
+    .occupied {
+      background-color: red;
+    }
+
+    .unoccupied {
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Phone Booth Status</h1>
+  <div id="phoneBoothContainer"></div>
+
+  <script>
+    async function fetchPhoneBoothStatus() {
+      try {
+        const response = await fetch('/api');
+        const data = await response.json();
+        renderPhoneBooths(data);
+      } catch (error) {
+        console.error('Error fetching phone booth status:', error);
+      }
+    }
+
+    function renderPhoneBooths(status) {
+      const container = document.getElementById('phoneBoothContainer');
+
+      if (!container) {
+        console.error('Container not found');
+        return;
+      }
+
+      // Clear existing content
+      container.innerHTML = '';
+
+      // Render phone booths
+      Object.keys(status).forEach((key) => {
+        const isOccupied = status[key];
+
+        const phoneBoothDiv = document.createElement('div');
+        phoneBoothDiv.classList.add('phone-booth', isOccupied ? 'occupied' : 'unoccupied');
+        phoneBoothDiv.textContent = key.replace('phonebooth_', ''); // Extract the number from the key
+        container.appendChild(phoneBoothDiv);
+      });
+    }
+
+    // Fetch and render phone booth status on page load
+    fetchPhoneBoothStatus();
+
+    // Refresh the status every 5 seconds
+    setInterval(fetchPhoneBoothStatus, 1000);
+  </script>
+</body>
+</html>
